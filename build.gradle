@@ -94,11 +94,6 @@ configurations {
 
 repositories {
     mavenCentral()
-    flatDir {
-        dirs 'externalmods'
-    }
-
-    mavenLocal()
     maven {
         name = 'GeckoLib'
         url 'https://dl.cloudsmith.io/public/geckolib3/geckolib/maven/'
@@ -141,10 +136,6 @@ sourceSets.main.resources { srcDir 'src/generated/resources' }
 
 repositories {
     mavenCentral()
-    flatDir {
-        dirs 'externalmods'
-    }
-
     maven {
         name 'LDTTeam - Modding'
         url 'https://ldtteam.jfrog.io/ldtteam/modding/'
@@ -196,6 +187,14 @@ dependencies {
 
 }
 
+tasks.named('processResources', ProcessResources).configure {
+    def replacements = [mod_version: mod_version]
+    inputs.properties replacements
+    filesMatching('META-INF/neoforge.mods.toml') {
+        expand replacements
+    }
+}
+
 
 // Example for how to get properties into the manifest for reading by the runtime..
 jar {
@@ -211,43 +210,7 @@ jar {
                 "Implementation-Title"    : project.name,
                 "Implementation-Version"  : "${version}",
                 "Implementation-Vendor"   : "ars_instrumentum",
-                "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ"),
         ])
-    }
-}
-
-tasks.register('verifyReleaseJar') {
-    group = 'verification'
-    description = 'Verify the release filename, NeoForge metadata, dependency range, and LGPL notice.'
-    dependsOn tasks.named('jar')
-    doLast {
-        def releaseJar = tasks.named('jar', Jar).get().archiveFile.get().asFile
-        def expectedName = "${mod_id}-${minecraft_version}-neoforge-${mod_version}.jar"
-        if (releaseJar.name != expectedName) {
-            throw new GradleException("Unexpected release filename: ${releaseJar.name}")
-        }
-
-        new java.util.zip.ZipFile(releaseJar).withCloseable { zip ->
-            def metadata = zip.getEntry('META-INF/neoforge.mods.toml')
-            if (metadata == null) {
-                throw new GradleException('Missing META-INF/neoforge.mods.toml')
-            }
-            if (zip.getEntry('META-INF/mods.toml') != null) {
-                throw new GradleException('Forge metadata present in NeoForge release jar')
-            }
-            if (zip.getEntry('META-INF/LICENSE_ars_instrumentum') == null) {
-                throw new GradleException('Missing LGPL license notice')
-            }
-
-            def toml = zip.getInputStream(metadata).withCloseable { it.getText('UTF-8') }
-            if (!toml.contains('modId = "ars_instrumentum"')) {
-                throw new GradleException('Incorrect or missing ars_instrumentum mod ID')
-            }
-            if (!toml.contains('modId = "ars_nouveau"') || !toml.contains('versionRange = "[5.13.3,)"')) {
-                throw new GradleException('Ars Nouveau dependency does not admit pack pin 1.21.1-5.13.3')
-            }
-        }
-        logger.lifecycle("Verified release jar: ${releaseJar.name}")
     }
 }
 
@@ -278,3 +241,6 @@ idea {
         downloadJavadoc = true
     }
 }
+
+// Shared profile selection, release manifest, archive isolation, and this mod's declarative jar checks.
+apply from: 'gradle/verify-release-jar.gradle'

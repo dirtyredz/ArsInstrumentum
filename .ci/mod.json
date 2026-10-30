@@ -1,0 +1,37 @@
+{
+  "modId": "ars_instrumentum",
+  "mainPackage": "de.sarenor.arsinstrumentum",
+  "profile": "neoforge-1.21.1",
+  "releaseBranch": "neoforge-1.21.1",
+  "datagen": true,
+  "gametests": false,
+  "packSide": "both",
+  "jar": {
+    "requiredEntries": [
+      "META-INF/LICENSE_ars_instrumentum",
+      "META-INF/neoforge.mods.toml",
+      "ars_instrumentum.mixins.json"
+    ],
+    "forbiddenEntries": [
+      "META-INF/mods.toml"
+    ],
+    "entryContains": [
+      {
+        "entry": "META-INF/neoforge.mods.toml",
+        "contains": "modId = \"ars_instrumentum\""
+      },
+      {
+        "entry": "META-INF/neoforge.mods.toml",
+        "contains": "modId = \"ars_nouveau\""
+      },
+      {
+        "entry": "META-INF/neoforge.mods.toml",
+        "contains": "versionRange = \"[5.13.3,)\""
+      },
+      {
+        "entry": "META-INF/LICENSE_ars_instrumentum",
+        "contains": "GNU LESSER GENERAL PUBLIC LICENSE"
+      }
+    ]
+  }
+}

@@ -1,13 +1,17 @@
 {
   "repository": "Sarenor/Ars-Instrumentum",
   "line": "neoforge-1.21.1",
+  "branchStart": {
+    "commit": "ec06fb0f1da3fd3b7daf0f520c7f92dcd4fe8ee5",
+    "description": "Sarenor/Ars-Instrumentum 1.21.x at the start of the dirtyredz NeoForge 1.21.1 fork"
+  },
   "upstream": {
     "repository": "https://github.com/Sarenor/Ars-Instrumentum",
     "branch": "1.21.x",
     "forkCommit": "ec06fb0f1da3fd3b7daf0f520c7f92dcd4fe8ee5",
     "license": "LGPL-3.0"
   },
-  "packBaseline": {
+  "baseline": {
     "version": "4.1.0",
     "jar": "ars_instrumentum-1.20.1-4.1.0.jar",
     "curseForgeProject": 580179,
