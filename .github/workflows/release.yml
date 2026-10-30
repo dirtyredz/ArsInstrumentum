@@ -130,4 +130,3 @@ jobs:
           GH_TOKEN: ${{ github.token }}
           GH_REPO: ${{ github.repository }}
         run: node .ci/scripts/release.mjs publish build/ci/release.json build/ci/release
-# register
