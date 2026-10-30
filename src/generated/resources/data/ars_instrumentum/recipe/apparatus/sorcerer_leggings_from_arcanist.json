@@ -1,0 +1,17 @@
+{
+  "type": "ars_nouveau:enchanting_apparatus",
+  "keepNbtOfReagent": true,
+  "pedestalItems": [
+    {
+      "item": "minecraft:golden_leggings"
+    }
+  ],
+  "reagent": {
+    "item": "ars_nouveau:arcanist_leggings"
+  },
+  "result": {
+    "count": 1,
+    "id": "ars_nouveau:sorcerer_leggings"
+  },
+  "sourceCost": 0
+}

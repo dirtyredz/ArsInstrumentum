@@ -1,0 +1,29 @@
+{
+  "type": "ars_nouveau:enchanting_apparatus",
+  "keepNbtOfReagent": false,
+  "pedestalItems": [
+    {
+      "tag": "c:ingots/gold"
+    },
+    {
+      "tag": "c:ingots/gold"
+    },
+    {
+      "item": "minecraft:diamond"
+    },
+    {
+      "item": "minecraft:ink_sac"
+    },
+    {
+      "item": "minecraft:paper"
+    }
+  ],
+  "reagent": {
+    "item": "ars_nouveau:dull_trinket"
+  },
+  "result": {
+    "count": 1,
+    "id": "ars_instrumentum:numeric_mana_charm"
+  },
+  "sourceCost": 0
+}

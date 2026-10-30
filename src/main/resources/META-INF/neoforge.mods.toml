@@ -40,14 +40,14 @@ config = "ars_instrumentum.mixins.json"
 
 [[dependencies.ars_instrumentum]]
 modId = "minecraft"
-versionRange = "[1.21,)"
+versionRange = "[1.21.1,1.21.2)"
 ordering = "NONE"
 side = "BOTH"
 type="required"
 
 [[dependencies.ars_instrumentum]]
 modId = "ars_nouveau"
-versionRange = "[1.21.1-5.4,)"
+versionRange = "[5.13.3,)"
 ordering = "AFTER"
 side = "BOTH"
 type="required"

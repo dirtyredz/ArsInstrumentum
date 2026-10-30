@@ -1,0 +1,17 @@
+{
+  "type": "ars_nouveau:enchanting_apparatus",
+  "keepNbtOfReagent": true,
+  "pedestalItems": [
+    {
+      "item": "minecraft:golden_chestplate"
+    }
+  ],
+  "reagent": {
+    "item": "ars_nouveau:arcanist_robes"
+  },
+  "result": {
+    "count": 1,
+    "id": "ars_nouveau:sorcerer_robes"
+  },
+  "sourceCost": 0
+}

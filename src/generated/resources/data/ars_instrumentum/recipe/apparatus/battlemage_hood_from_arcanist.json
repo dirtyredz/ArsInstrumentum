@@ -1,0 +1,17 @@
+{
+  "type": "ars_nouveau:enchanting_apparatus",
+  "keepNbtOfReagent": true,
+  "pedestalItems": [
+    {
+      "item": "minecraft:diamond_helmet"
+    }
+  ],
+  "reagent": {
+    "item": "ars_nouveau:arcanist_hood"
+  },
+  "result": {
+    "count": 1,
+    "id": "ars_nouveau:battlemage_hood"
+  },
+  "sourceCost": 0
+}

@@ -1,0 +1,17 @@
+{
+  "type": "ars_nouveau:enchanting_apparatus",
+  "keepNbtOfReagent": true,
+  "pedestalItems": [
+    {
+      "item": "minecraft:iron_boots"
+    }
+  ],
+  "reagent": {
+    "item": "ars_nouveau:sorcerer_boots"
+  },
+  "result": {
+    "count": 1,
+    "id": "ars_nouveau:arcanist_boots"
+  },
+  "sourceCost": 0
+}

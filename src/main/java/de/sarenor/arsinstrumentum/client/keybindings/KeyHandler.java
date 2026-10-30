@@ -29,17 +29,23 @@ public class KeyHandler {
                 }
             }
             if (key == ModKeyBindings.SWITCH_ARMARIUM_SLOT.getKey().getValue()) {
-                if (CuriosApi.getCuriosHelper().findEquippedCurio(WIZARDS_ARMARIUM.get(), player).isPresent()) {
+                if (hasArmariumEquipped(player)) {
                     Networking.sendToServer(new WizardsArmariumSwitchMessage());
                 }
             }
             if (key == ModKeyBindings.CHOOSE_ARMARIUM_SLOT.getKey().getValue()) {
-                if (CuriosApi.getCuriosHelper().findEquippedCurio(WIZARDS_ARMARIUM.get(), player).isPresent()) {
+                if (hasArmariumEquipped(player)) {
                     WizardsArmarium.openSwitchRadialMenu(player);
                 }
             }
         }
 
+    }
+
+    private static boolean hasArmariumEquipped(Player player) {
+        return CuriosApi.getCuriosInventory(player)
+                .map(inventory -> inventory.isEquipped(WIZARDS_ARMARIUM.get()))
+                .orElse(false);
     }
 
     @SubscribeEvent

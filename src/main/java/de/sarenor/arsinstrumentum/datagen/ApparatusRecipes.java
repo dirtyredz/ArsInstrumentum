@@ -1,6 +1,5 @@
 package de.sarenor.arsinstrumentum.datagen;
 
-import com.hollingsworth.arsnouveau.common.crafting.recipes.EnchantingApparatusRecipe;
 import com.hollingsworth.arsnouveau.common.datagen.ApparatusRecipeBuilder;
 import com.hollingsworth.arsnouveau.common.datagen.ApparatusRecipeProvider;
 import com.hollingsworth.arsnouveau.setup.registry.ItemsRegistry;
@@ -15,16 +14,9 @@ import net.neoforged.neoforge.common.Tags;
 import org.jetbrains.annotations.NotNull;
 
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.List;
-
 public class ApparatusRecipes extends ApparatusRecipeProvider {
-
-    private final DataGenerator generator;
-
     public ApparatusRecipes(DataGenerator generatorIn) {
         super(generatorIn);
-        this.generator = generatorIn;
     }
 
     protected static Path getRecipePath(Path pathIn, String str) {
@@ -33,9 +25,10 @@ public class ApparatusRecipes extends ApparatusRecipeProvider {
 
     @Override
     public void collectJsons(CachedOutput cache) {
-        //log.info("ArsInstrumentum: Recipe-Generation started");
         addEntries();
-        //log.info("ArsInstrumentum: Recipe-Generation ended");
+        for (var recipe : recipes) {
+            saveStable(cache, recipe.serialize(), getRecipePath(output, recipe.id().getPath()));
+        }
     }
 
     public void addEntries() {

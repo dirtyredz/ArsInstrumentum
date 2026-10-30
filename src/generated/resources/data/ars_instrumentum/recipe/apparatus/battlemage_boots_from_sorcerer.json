@@ -1,0 +1,17 @@
+{
+  "type": "ars_nouveau:enchanting_apparatus",
+  "keepNbtOfReagent": true,
+  "pedestalItems": [
+    {
+      "item": "minecraft:diamond_boots"
+    }
+  ],
+  "reagent": {
+    "item": "ars_nouveau:sorcerer_boots"
+  },
+  "result": {
+    "count": 1,
+    "id": "ars_nouveau:battlemage_boots"
+  },
+  "sourceCost": 0
+}
