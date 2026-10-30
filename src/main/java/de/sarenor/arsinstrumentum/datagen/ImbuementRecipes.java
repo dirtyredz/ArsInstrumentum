@@ -13,17 +13,11 @@ import net.minecraft.world.item.crafting.Ingredient;
 import net.neoforged.neoforge.common.Tags;
 import org.jetbrains.annotations.NotNull;
 
-import java.nio.file.Path;
-import java.util.ArrayList;
 import java.util.concurrent.CompletableFuture;
 
 public class ImbuementRecipes extends ImbuementRecipeProvider {
     public ImbuementRecipes(DataGenerator generatorIn) {
         super(generatorIn);
-    }
-
-    private static Path getRecipePath(Path pathIn, String str) {
-        return pathIn.resolve("data/ars_instrumentum/recipe/imbuement/imbuement_" + str + ".json");
     }
 
     @Override
@@ -34,19 +28,16 @@ public class ImbuementRecipes extends ImbuementRecipeProvider {
     @Override
     public CompletableFuture<?> run(CachedOutput cache) {
         collectJsons(cache);
-        var futures = new ArrayList<CompletableFuture<?>>();
-        return ModDatagen.registries.thenCompose(registries -> {
-            for (var recipe : recipes) {
-                futures.add(net.minecraft.data.DataProvider.saveStable(
+        return ModDatagen.registries.thenCompose(registries -> RecipeJsonWriter.writeAll(
+                recipes,
+                recipe -> net.minecraft.data.DataProvider.saveStable(
                         cache,
                         registries,
                         ImbuementRecipe.CODEC,
                         recipe,
-                        getRecipePath(output, recipe.id.getPath())
-                ));
-            }
-            return CompletableFuture.allOf(futures.toArray(CompletableFuture[]::new));
-        });
+                        RecipeJsonWriter.recipePath(output, "imbuement", "imbuement_" + RecipeJsonWriter.path(recipe.id))
+                )
+        ));
     }
 
     public @NotNull String getName() {

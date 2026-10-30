@@ -6,6 +6,7 @@ import com.hollingsworth.arsnouveau.setup.registry.ItemsRegistry;
 import de.sarenor.arsinstrumentum.ArsInstrumentum;
 import de.sarenor.arsinstrumentum.setup.Registration;
 import net.minecraft.data.CachedOutput;
+import net.minecraft.data.DataProvider;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Items;
@@ -13,22 +14,26 @@ import net.minecraft.world.item.crafting.Ingredient;
 import net.neoforged.neoforge.common.Tags;
 import org.jetbrains.annotations.NotNull;
 
-import java.nio.file.Path;
+import java.util.concurrent.CompletableFuture;
+
 public class ApparatusRecipes extends ApparatusRecipeProvider {
     public ApparatusRecipes(DataGenerator generatorIn) {
         super(generatorIn);
     }
 
-    protected static Path getRecipePath(Path pathIn, String str) {
-        return pathIn.resolve("data/ars_instrumentum/recipe/apparatus/" + str + ".json");
-    }
-
     @Override
     public void collectJsons(CachedOutput cache) {
         addEntries();
-        for (var recipe : recipes) {
-            saveStable(cache, recipe.serialize(), getRecipePath(output, recipe.id().getPath()));
-        }
+    }
+
+    @Override
+    public CompletableFuture<?> run(CachedOutput cache) {
+        collectJsons(cache);
+        return RecipeJsonWriter.writeAll(recipes, recipe -> DataProvider.saveStable(
+                cache,
+                recipe.serialize(),
+                RecipeJsonWriter.recipePath(output, "apparatus", RecipeJsonWriter.path(recipe.id()))
+        ));
     }
 
     public void addEntries() {
