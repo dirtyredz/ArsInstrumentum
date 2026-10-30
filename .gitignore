@@ -26,3 +26,6 @@ Desktop.ini
 .structure-review-pending*
 .structure-review-paused
 .docket/
+
+# Runtime logs (upstream once tracked these)
+logs/
