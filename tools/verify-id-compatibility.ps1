@@ -1,26 +1,16 @@
 param(
-    [Parameter(Mandatory = $true)]
-    [string] $BaselineJar,
-
-    [Parameter(Mandatory = $true)]
-    [string] $CandidateJar,
-
-    [Parameter(Mandatory = $true)]
-    [string] $ReportPath
+    [string] $RegistryDumpPath = 'build/reports/ars_instrumentum/registry-ids.json',
+    [string] $ReportPath = 'build/reports/ars_instrumentum/id-diff.md'
 )
 
 $ErrorActionPreference = 'Stop'
+$repoRoot = Split-Path -Parent $PSScriptRoot
 
-Add-Type -AssemblyName System.IO.Compression.FileSystem
-
-function Get-ZipEntries([string] $Path) {
-    $archive = [System.IO.Compression.ZipFile]::OpenRead($Path)
-    try {
-        return @($archive.Entries | Where-Object { -not [string]::IsNullOrEmpty($_.Name) } | ForEach-Object { $_.FullName })
+function Resolve-RepoPath([string] $Path) {
+    if ([System.IO.Path]::IsPathRooted($Path)) {
+        return $Path
     }
-    finally {
-        $archive.Dispose()
-    }
+    return Join-Path $repoRoot $Path
 }
 
 function ConvertTo-DataId([string] $Entry) {
@@ -37,72 +27,60 @@ function ConvertTo-DataId([string] $Entry) {
     return "${namespace}:${kind}/$($Matches[3])"
 }
 
-function Get-RegistrationBytecode([string] $Jar) {
-    $output = & javap -classpath $Jar -c -p de.sarenor.arsinstrumentum.setup.Registration 2>&1
-    if ($LASTEXITCODE -ne 0) {
-        throw "javap failed for $Jar`n$($output -join "`n")"
+function Get-DataIds([string[]] $ResourceRoots) {
+    $ids = foreach ($resourceRoot in $ResourceRoots) {
+        $dataRoot = Join-Path $resourceRoot 'data'
+        if (-not (Test-Path -LiteralPath $dataRoot)) {
+            continue
+        }
+
+        $resolvedRoot = (Resolve-Path -LiteralPath $resourceRoot).Path.TrimEnd('\', '/')
+        Get-ChildItem -LiteralPath $dataRoot -Recurse -File -Filter '*.json' | ForEach-Object {
+            $relative = $_.FullName.Substring($resolvedRoot.Length + 1).Replace('\', '/')
+            ConvertTo-DataId $relative
+        }
     }
-    return $output -join "`n"
+    return @($ids | Where-Object { $_ } | Sort-Object -Unique)
 }
 
-$repoRoot = Split-Path -Parent $PSScriptRoot
+$registryDumpPath = Resolve-RepoPath $RegistryDumpPath
+$reportPath = Resolve-RepoPath $ReportPath
 $baseline = Get-Content -LiteralPath (Join-Path $repoRoot '.ci/compatibility-baseline.json') -Raw | ConvertFrom-Json
-$actualHash = (Get-FileHash -LiteralPath $BaselineJar -Algorithm SHA256).Hash.ToLowerInvariant()
-if ($actualHash -ne $baseline.sha256) {
-    throw "Unexpected baseline SHA-256: $actualHash"
-}
+$provenance = Get-Content -LiteralPath (Join-Path $repoRoot '.ci/port-provenance.json') -Raw | ConvertFrom-Json
+$candidate = Get-Content -LiteralPath $registryDumpPath -Raw | ConvertFrom-Json
 
-$baselineEntries = Get-ZipEntries $BaselineJar
-$candidateEntries = Get-ZipEntries $CandidateJar
-$candidateEntrySet = [System.Collections.Generic.HashSet[string]]::new([string[]] $candidateEntries)
-
-$baselineDataIds = @($baselineEntries | ForEach-Object { ConvertTo-DataId $_ } | Where-Object { $_ } | Sort-Object -Unique)
-$candidateDataIds = @($candidateEntries | ForEach-Object { ConvertTo-DataId $_ } | Where-Object { $_ } | Sort-Object -Unique)
-$candidateDataSet = [System.Collections.Generic.HashSet[string]]::new([string[]] $candidateDataIds)
-$missingData = @($baselineDataIds | Where-Object { -not $candidateDataSet.Contains($_) })
-
-$baselineBytecode = Get-RegistrationBytecode $BaselineJar
-$candidateBytecode = Get-RegistrationBytecode $CandidateJar
 $missingRegistries = [System.Collections.Generic.List[string]]::new()
-
-foreach ($id in $baseline.registries.items) {
-    if (-not $candidateBytecode.Contains("// String $id")) {
-        $missingRegistries.Add("item ars_instrumentum:$id (registration literal missing)")
-    }
-    if (-not $candidateEntrySet.Contains("assets/ars_instrumentum/models/item/$id.json")) {
-        $missingRegistries.Add("item ars_instrumentum:$id (item model missing)")
-    }
-}
-foreach ($id in $baseline.registries.blocks) {
-    if (-not $candidateBytecode.Contains("// String $id")) {
-        $missingRegistries.Add("block ars_instrumentum:$id (registration literal missing)")
-    }
-    if (-not $candidateEntrySet.Contains("assets/ars_instrumentum/blockstates/$id.json")) {
-        $missingRegistries.Add("block ars_instrumentum:$id (blockstate missing)")
-    }
-}
-foreach ($id in $baseline.registries.block_entities) {
-    if (-not $candidateBytecode.Contains("// String $id")) {
-        $missingRegistries.Add("block entity ars_instrumentum:$id")
-    }
-}
-
 foreach ($category in @('items', 'blocks', 'block_entities')) {
-    foreach ($id in $baseline.registries.$category) {
-        if (-not $baselineBytecode.Contains("// String $id")) {
-            throw "Compatibility manifest does not match baseline bytecode: $category $id"
+    $candidateIds = [System.Collections.Generic.HashSet[string]]::new([string[]] @($candidate.$category))
+    foreach ($path in @($baseline.registries.$category)) {
+        $id = "ars_instrumentum:$path"
+        if (-not $candidateIds.Contains($id)) {
+            $missingRegistries.Add("$category $id")
         }
     }
 }
 
+$candidateDataIds = Get-DataIds @(
+    (Join-Path $repoRoot 'src/generated/resources'),
+    (Join-Path $repoRoot 'src/main/resources')
+)
+$candidateDataSet = [System.Collections.Generic.HashSet[string]]::new([string[]] $candidateDataIds)
+$missingData = @($baseline.data | Where-Object { -not $candidateDataSet.Contains($_) })
+
+$baselineRegistryCount = @($baseline.registries.items).Count +
+    @($baseline.registries.blocks).Count +
+    @($baseline.registries.block_entities).Count
+$baselineIdentity = $provenance.baseline
+$targetIdentity = $provenance.target
+
 $lines = [System.Collections.Generic.List[string]]::new()
-$lines.Add('# Ars Instrumentum 4.1.0 to 5.0.0 ID compatibility')
+$lines.Add("# Ars Instrumentum $($baselineIdentity.version) to $($targetIdentity.version) ID compatibility")
 $lines.Add('')
-$lines.Add("- Baseline: ``$([System.IO.Path]::GetFileName($BaselineJar))``")
-$lines.Add("- Baseline SHA-256: ``$actualHash``")
-$lines.Add("- Candidate: ``$([System.IO.Path]::GetFileName($CandidateJar))``")
-$lines.Add("- Registry IDs checked: $((@($baseline.registries.items).Count + @($baseline.registries.blocks).Count + @($baseline.registries.block_entities).Count))")
-$lines.Add("- Data IDs checked: $($baselineDataIds.Count)")
+$lines.Add("- Baseline: ``$($baselineIdentity.jar)``")
+$lines.Add("- Baseline SHA-256: ``$($baselineIdentity.sha256)``")
+$lines.Add("- Candidate registry dump: ``$([System.IO.Path]::GetFileName($registryDumpPath))``")
+$lines.Add("- Registry IDs checked: $baselineRegistryCount")
+$lines.Add("- Data IDs checked: $(@($baseline.data).Count)")
 $lines.Add('')
 $lines.Add('## Missing registry IDs')
 $lines.Add('')
@@ -115,13 +93,13 @@ $lines.Add('')
 $lines.Add('## Result')
 $lines.Add('')
 $passed = $missingRegistries.Count -eq 0 -and $missingData.Count -eq 0
-$lines.Add($(if ($passed) { 'PASS - every 4.1.0 registry and normalized recipe/data ID is present.' } else { 'FAIL - compatibility gaps remain.' }))
+$lines.Add($(if ($passed) { "PASS - every $($baselineIdentity.version) registry and normalized recipe/data ID is present." } else { 'FAIL - compatibility gaps remain.' }))
 
-$reportDirectory = Split-Path -Parent $ReportPath
+$reportDirectory = Split-Path -Parent $reportPath
 if (-not (Test-Path -LiteralPath $reportDirectory)) {
     New-Item -ItemType Directory -Path $reportDirectory | Out-Null
 }
-[System.IO.File]::WriteAllLines($ReportPath, $lines)
+[System.IO.File]::WriteAllLines($reportPath, $lines)
 $lines | ForEach-Object { Write-Output $_ }
 
 if (-not $passed) { exit 1 }

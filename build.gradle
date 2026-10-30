@@ -54,6 +54,8 @@ neoForge {
         data {
             data()
 
+            systemProperty 'arsinstrumentum.registryDump', file('build/reports/ars_instrumentum/registry-ids.json').absolutePath
+
             // example of overriding the workingDirectory set in configureEach above, uncomment if you want to use it
             // gameDirectory = project.file('run-data')
 
@@ -232,6 +234,20 @@ publishing {
 
 tasks.withType(JavaCompile).configureEach {
     options.encoding = 'UTF-8' // Use the UTF-8 charset for Java compilation
+}
+
+def verifyIdCompatibility = tasks.register('verifyIdCompatibility', Exec) {
+    group = 'verification'
+    description = 'Compare runData registry and data IDs with the installed-pack compatibility baseline.'
+    def powershell = System.getProperty('os.name').toLowerCase(Locale.ROOT).contains('windows') ? 'powershell.exe' : 'pwsh'
+    commandLine powershell, '-NoProfile', '-File', file('tools/verify-id-compatibility.ps1').absolutePath,
+            '-RegistryDumpPath', file('build/reports/ars_instrumentum/registry-ids.json').absolutePath,
+            '-ReportPath', file('build/reports/ars_instrumentum/id-diff.md').absolutePath
+    onlyIf { tasks.named('runData').get().state.failure == null }
+}
+
+tasks.named('runData').configure {
+    finalizedBy verifyIdCompatibility
 }
 
 // IDEA no longer automatically downloads sources/javadoc jars for dependencies, so we need to explicitly enable the behavior.

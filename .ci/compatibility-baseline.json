@@ -1,7 +1,4 @@
 {
-  "version": "4.1.0",
-  "jar": "ars_instrumentum-1.20.1-4.1.0.jar",
-  "sha256": "1ff7923640b80d27726ab864937b1342c7bbfb1d424185e9cfcb25ca5894d2b5",
   "registries": {
     "items": [
       "arcane_applicator",
@@ -18,5 +15,50 @@
     "block_entities": [
       "arcane_applicator_tile"
     ]
-  }
+  },
+  "data": [
+    "ars_instrumentum:advancement/recipes/misc/arcane_applicator",
+    "ars_instrumentum:advancement/recipes/misc/copy_paste_spell_scroll",
+    "ars_instrumentum:advancement/recipes/misc/runic_storage_stone",
+    "ars_instrumentum:advancement/recipes/misc/runic_storage_stone_alternate",
+    "ars_instrumentum:advancement/recipes/misc/scroll_of_save_starbuncle",
+    "ars_instrumentum:loot_table/blocks/arcane_applicator",
+    "ars_instrumentum:recipe/apparatus/arcanist_boots_from_battlemage",
+    "ars_instrumentum:recipe/apparatus/arcanist_boots_from_sorcerer",
+    "ars_instrumentum:recipe/apparatus/arcanist_hood_from_battlemage",
+    "ars_instrumentum:recipe/apparatus/arcanist_hood_from_sorcerer",
+    "ars_instrumentum:recipe/apparatus/arcanist_leggings_from_battlemage",
+    "ars_instrumentum:recipe/apparatus/arcanist_leggings_from_sorcerer",
+    "ars_instrumentum:recipe/apparatus/arcanist_robes_from_battlemage",
+    "ars_instrumentum:recipe/apparatus/arcanist_robes_from_sorcerer",
+    "ars_instrumentum:recipe/apparatus/battlemage_boots_from_arcanist",
+    "ars_instrumentum:recipe/apparatus/battlemage_boots_from_sorcerer",
+    "ars_instrumentum:recipe/apparatus/battlemage_hood_from_arcanist",
+    "ars_instrumentum:recipe/apparatus/battlemage_hood_from_sorcerer",
+    "ars_instrumentum:recipe/apparatus/battlemage_leggings_from_arcanist",
+    "ars_instrumentum:recipe/apparatus/battlemage_leggings_from_sorcerer",
+    "ars_instrumentum:recipe/apparatus/battlemage_robes_from_arcanist",
+    "ars_instrumentum:recipe/apparatus/battlemage_robes_from_sorcerer",
+    "ars_instrumentum:recipe/apparatus/numeric_mana_charm",
+    "ars_instrumentum:recipe/apparatus/sorcerer_boots_from_arcanist",
+    "ars_instrumentum:recipe/apparatus/sorcerer_boots_from_battlemage",
+    "ars_instrumentum:recipe/apparatus/sorcerer_hood_from_arcanist",
+    "ars_instrumentum:recipe/apparatus/sorcerer_hood_from_battlemage",
+    "ars_instrumentum:recipe/apparatus/sorcerer_leggings_from_arcanist",
+    "ars_instrumentum:recipe/apparatus/sorcerer_leggings_from_battlemage",
+    "ars_instrumentum:recipe/apparatus/sorcerer_robes_from_arcanist",
+    "ars_instrumentum:recipe/apparatus/sorcerer_robes_from_battlemage",
+    "ars_instrumentum:recipe/apparatus/wizards_armarium",
+    "ars_instrumentum:recipe/arcane_applicator",
+    "ars_instrumentum:recipe/archmage_spell_book_upgrade_alternate",
+    "ars_instrumentum:recipe/copy_paste_spell_scroll",
+    "ars_instrumentum:recipe/imbuement/imbuement_fake_wilden_tribute",
+    "ars_instrumentum:recipe/runic_storage_stone",
+    "ars_instrumentum:recipe/runic_storage_stone_alternate",
+    "ars_instrumentum:recipe/scroll_of_save_starbuncle",
+    "curios:tags/item/belt",
+    "curios:tags/item/charm",
+    "minecraft:tags/block/mineable/axe",
+    "minecraft:tags/block/mineable/pickaxe"
+  ]
 }

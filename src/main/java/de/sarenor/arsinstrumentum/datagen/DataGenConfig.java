@@ -9,6 +9,7 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import net.neoforged.neoforge.data.event.GatherDataEvent;
 
+import java.nio.file.Path;
 import java.util.concurrent.CompletableFuture;
 
 @EventBusSubscriber(modid = ArsInstrumentum.MODID, bus = EventBusSubscriber.Bus.MOD)
@@ -33,6 +34,13 @@ public class DataGenConfig {
         generator.addProvider(event.includeServer(), new BlockstateProvider(generator, event.getExistingFileHelper()));
         generator.addProvider(event.includeServer(), new BlockTagProvider(generator, event.getLookupProvider(), event.getExistingFileHelper()));
         generator.addProvider(event.includeServer(), new AICurioProvider(output, existingFileHelper, provider));
+        String registryDump = System.getProperty("arsinstrumentum.registryDump");
+        if (event.includeServer()) {
+            if (registryDump == null) {
+                throw new IllegalStateException("Missing arsinstrumentum.registryDump system property");
+            }
+            generator.addProvider(true, new RegistryIdProvider(Path.of(registryDump)));
+        }
         //        log.info("Ars Instrumentum: Data Generation ended.");
     }
 }
