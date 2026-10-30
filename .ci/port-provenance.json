@@ -1,0 +1,26 @@
+{
+  "repository": "Sarenor/Ars-Instrumentum",
+  "line": "neoforge-1.21.1",
+  "upstream": {
+    "repository": "https://github.com/Sarenor/Ars-Instrumentum",
+    "branch": "1.21.x",
+    "forkCommit": "ec06fb0f1da3fd3b7daf0f520c7f92dcd4fe8ee5",
+    "license": "LGPL-3.0"
+  },
+  "packBaseline": {
+    "version": "4.1.0",
+    "jar": "ars_instrumentum-1.20.1-4.1.0.jar",
+    "curseForgeProject": 580179,
+    "curseForgeFile": 5047343,
+    "sha256": "1ff7923640b80d27726ab864937b1342c7bbfb1d424185e9cfcb25ca5894d2b5",
+    "description": "Forge 1.20.1 release installed in the Evil Eye pack; its registry and recipe identifiers are the compatibility baseline"
+  },
+  "target": {
+    "minecraft": "1.21.1",
+    "loader": "NeoForge 21.1.265",
+    "arsNouveau": "1.21.1-5.13.3",
+    "java": 21,
+    "version": "5.0.0"
+  },
+  "communityPatches": []
+}
