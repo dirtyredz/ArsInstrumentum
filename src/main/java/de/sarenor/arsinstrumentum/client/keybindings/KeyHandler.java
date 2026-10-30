@@ -5,15 +5,13 @@ import com.hollingsworth.arsnouveau.common.network.Networking;
 import de.sarenor.arsinstrumentum.ArsInstrumentum;
 import de.sarenor.arsinstrumentum.items.curios.armarium.WizardsArmarium;
 import de.sarenor.arsinstrumentum.network.WizardsArmariumSwitchMessage;
+import de.sarenor.arsinstrumentum.utils.CuriosUtil;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.entity.player.Player;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.InputEvent;
-import top.theillusivec4.curios.api.CuriosApi;
-
-import static de.sarenor.arsinstrumentum.setup.Registration.WIZARDS_ARMARIUM;
 
 @EventBusSubscriber(value = Dist.CLIENT, modid = ArsInstrumentum.MODID)
 public class KeyHandler {
@@ -29,23 +27,17 @@ public class KeyHandler {
                 }
             }
             if (key == ModKeyBindings.SWITCH_ARMARIUM_SLOT.getKey().getValue()) {
-                if (hasArmariumEquipped(player)) {
+                if (CuriosUtil.isArmariumEquipped(player)) {
                     Networking.sendToServer(new WizardsArmariumSwitchMessage());
                 }
             }
             if (key == ModKeyBindings.CHOOSE_ARMARIUM_SLOT.getKey().getValue()) {
-                if (hasArmariumEquipped(player)) {
+                if (CuriosUtil.isArmariumEquipped(player)) {
                     WizardsArmarium.openSwitchRadialMenu(player);
                 }
             }
         }
 
-    }
-
-    private static boolean hasArmariumEquipped(Player player) {
-        return CuriosApi.getCuriosInventory(player)
-                .map(inventory -> inventory.isEquipped(WIZARDS_ARMARIUM.get()))
-                .orElse(false);
     }
 
     @SubscribeEvent

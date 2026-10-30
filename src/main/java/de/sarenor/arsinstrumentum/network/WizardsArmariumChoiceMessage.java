@@ -3,6 +3,7 @@ package de.sarenor.arsinstrumentum.network;
 import com.hollingsworth.arsnouveau.common.network.AbstractPacket;
 import de.sarenor.arsinstrumentum.ArsInstrumentum;
 import de.sarenor.arsinstrumentum.items.curios.armarium.WizardsArmarium;
+import de.sarenor.arsinstrumentum.utils.CuriosUtil;
 
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.RegistryFriendlyByteBuf;
@@ -11,9 +12,6 @@ import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import org.jetbrains.annotations.NotNull;
-import top.theillusivec4.curios.api.CuriosApi;
-
-import static de.sarenor.arsinstrumentum.setup.Registration.WIZARDS_ARMARIUM;
 
 public class WizardsArmariumChoiceMessage extends AbstractPacket {
 
@@ -37,7 +35,7 @@ public class WizardsArmariumChoiceMessage extends AbstractPacket {
     }
 
     public void onServerReceived(MinecraftServer minecraftServer, ServerPlayer player) {
-            if (player != null && CuriosApi.getCuriosInventory(player).flatMap(i -> i.findFirstCurio(WIZARDS_ARMARIUM.get())).isPresent()) {
+            if (player != null && CuriosUtil.isArmariumEquipped(player)) {
                 WizardsArmarium.handleArmariumChoice(player, choosenSlot);
             }
 
@@ -48,4 +46,3 @@ public class WizardsArmariumChoiceMessage extends AbstractPacket {
         return TYPE;
     }
 }
-

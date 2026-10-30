@@ -30,7 +30,6 @@ import net.minecraft.world.level.Level;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.NotNull;
-import top.theillusivec4.curios.api.CuriosApi;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,7 +37,6 @@ import java.util.Optional;
 
 import static com.hollingsworth.arsnouveau.common.event.FamiliarEvents.getFamiliars;
 import static de.sarenor.arsinstrumentum.setup.Registration.ARMARIUM_STORAGE;
-import static de.sarenor.arsinstrumentum.setup.Registration.WIZARDS_ARMARIUM;
 import static de.sarenor.arsinstrumentum.utils.IterableUtils.iterableToList;
 
 public class WizardsArmarium extends ArsNouveauCurio {
@@ -54,7 +52,7 @@ public class WizardsArmarium extends ArsNouveauCurio {
 
     @OnlyIn(Dist.CLIENT)
     public static void openSwitchRadialMenu(Player player) {
-        var armariumOptional = CuriosApi.getCuriosInventory(player).flatMap(i -> i.findFirstCurio(WIZARDS_ARMARIUM.get()));
+        var armariumOptional = CuriosUtil.findArmarium(player);
         armariumOptional.ifPresent(slotResult -> {
             ArmariumStorage armariumStorage = slotResult.stack().get(ARMARIUM_STORAGE.get());
             if (armariumStorage == null) return;
@@ -63,7 +61,7 @@ public class WizardsArmarium extends ArsNouveauCurio {
     }
 
     public static void handleArmariumChoice(ServerPlayer player, int choosenSlot) {
-        var armariumOptional = CuriosApi.getCuriosInventory(player).flatMap(i -> i.findFirstCurio(WIZARDS_ARMARIUM.get()));
+        var armariumOptional = CuriosUtil.findArmarium(player);
         armariumOptional.ifPresent(slotResult -> {
             ArmariumStorage armariumStorage = slotResult.stack().get(ARMARIUM_STORAGE.get());
             if (armariumStorage == null) return;
@@ -80,7 +78,7 @@ public class WizardsArmarium extends ArsNouveauCurio {
     }
 
     public static void handleArmariumSwitch(ServerPlayer player) {
-        var armariumOptional = CuriosApi.getCuriosInventory(player).flatMap(i -> i.findFirstCurio(WIZARDS_ARMARIUM.get()));
+        var armariumOptional = CuriosUtil.findArmarium(player);
         armariumOptional.ifPresent(slotResult -> {
             ArmariumStorage armariumStorage = slotResult.stack().get(ARMARIUM_STORAGE.get());
             if (armariumStorage == null) return;

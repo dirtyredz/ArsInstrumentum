@@ -1,9 +1,11 @@
 package de.sarenor.arsinstrumentum.utils;
 
+import de.sarenor.arsinstrumentum.setup.Registration;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import top.theillusivec4.curios.api.CuriosApi;
-import top.theillusivec4.curios.api.type.capability.ICuriosItemHandler;
+import top.theillusivec4.curios.api.SlotResult;
 import top.theillusivec4.curios.api.type.inventory.ICurioStacksHandler;
 import top.theillusivec4.curios.api.type.inventory.IDynamicStackHandler;
 
@@ -14,6 +16,15 @@ import java.util.Optional;
 
 public class CuriosUtil {
     private static final String SPELLFOCUS_CURIO_ID = "an_focus";
+
+    public static Optional<SlotResult> findArmarium(Player player) {
+        return CuriosApi.getCuriosInventory(player)
+                .flatMap(inventory -> inventory.findFirstCurio(Registration.WIZARDS_ARMARIUM.get()));
+    }
+
+    public static boolean isArmariumEquipped(Player player) {
+        return findArmarium(player).isPresent();
+    }
 
     public static Optional<IDynamicStackHandler> getSpellfocusStackHandler(ServerPlayer player) {
         return CuriosApi.getCuriosInventory(player).flatMap(iCuriosItemHandler -> iCuriosItemHandler.getStacksHandler(SPELLFOCUS_CURIO_ID).map(ICurioStacksHandler::getStacks));
